@@ -213,6 +213,8 @@ button:focus-visible, input:focus-visible, select:focus-visible {
   font-size: 13px;
   font-weight: 700;
   color: var(--ink);
+  cursor: pointer;
+  user-select: none;
 }
 
 .login-trigger {

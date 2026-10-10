@@ -9,6 +9,7 @@ let session = readSession();
 let toastTimer;
 let currentBootId = null;
 let isServerRestarting = false;
+let sessionExpiresAt = null;
 
 function readSession() {
   try {
@@ -87,6 +88,28 @@ function getActiveTab() {
   return activeBtn ? activeBtn.dataset.tab : "menu";
 }
 
+function updateSessionCountdown() {
+  const chip = $("#account-chip");
+  if (!chip) return;
+  if (!session) {
+    chip.textContent = "Guest";
+    chip.title = "";
+    return;
+  }
+  if (!sessionExpiresAt) {
+    chip.textContent = `${session.name} · ${session.role}`;
+    return;
+  }
+  const remaining = Math.max(0, Math.ceil((sessionExpiresAt - Date.now()) / 1000));
+  chip.textContent = `${session.name} · ${session.role} (${remaining}s)`;
+  chip.title = `Session expires in ${remaining}s`;
+  if (remaining <= 0) {
+    sessionExpiresAt = null;
+    signOut(false);
+    showToast("Session expired. Please sign in again.");
+  }
+}
+
 function paintAccount() {
   const chip = $("#account-chip");
   if (chip) {
@@ -101,18 +124,24 @@ function paintAccount() {
     selectTab("menu");
   }
   verifySessionStatus();
+  updateSessionCountdown();
 }
 
 async function verifySessionStatus() {
-  if (!session?.token) return;
+  if (!session?.token) {
+    sessionExpiresAt = null;
+    updateSessionCountdown();
+    return;
+  }
   try {
     const result = await api("auth/session");
-    const chip = $("#account-chip");
-    if (chip && result.expires_in !== undefined) {
-      chip.title = `Session expires in ${result.expires_in}s`;
+    if (result.expires_in !== undefined) {
+      sessionExpiresAt = Date.now() + result.expires_in * 1000;
+      updateSessionCountdown();
     }
   } catch (err) {
     if (err.message.includes("401") || err.message.includes("expired") || err.message.includes("invalid")) {
+      sessionExpiresAt = null;
       signOut(false);
       showToast("Session expired. Please sign in again.");
     }
@@ -379,8 +408,10 @@ async function buildCombo() {
 
 function signOut(showMessage = true) {
   session = null;
+  sessionExpiresAt = null;
   saveSession(null);
   paintAccount();
+  updateSessionCountdown();
   loadOrders();
   loadLimiter();
   if (showMessage) showToast("You’re signed out.");
@@ -396,10 +427,12 @@ async function signIn(event) {
       body: JSON.stringify({ username, password }),
     });
     session = result;
+    sessionExpiresAt = Date.now() + (result.expires_in || 30) * 1000;
     saveSession(session);
     const modal = $("#login-modal");
     if (modal) modal.classList.add("hidden");
     paintAccount();
+    updateSessionCountdown();
     await loadOrders();
     await loadLimiter();
     showToast(`Welcome, ${result.name.split(" ")[0]}!`);
@@ -578,6 +611,13 @@ $("#build-combo")?.addEventListener("click", buildCombo);
 $("#rush-window")?.addEventListener("change", loadPeak);
 $("#find-route")?.addEventListener("click", loadRoute);
 
+$("#account-chip")?.addEventListener("click", () => {
+  if (session && sessionExpiresAt) {
+    const remaining = Math.max(0, Math.ceil((sessionExpiresAt - Date.now()) / 1000));
+    showToast(`Session expires in ${remaining}s`);
+  }
+});
+
 // Initialization & Seeded Scenarios
 paintAccount();
 setupLocations();
@@ -589,12 +629,16 @@ loadRoute();
 loadOrders();
 buildCombo();
 
+// Continuously update live countdown every second
+window.setInterval(updateSessionCountdown, 1000);
+
 // Poll health endpoint every 1.5s for instant reload detection
 window.setInterval(checkReloadHealth, 1500);
 
 // Live update orders and slots every 3s
 window.setInterval(() => {
   if (!isServerRestarting) {
+    verifySessionStatus();
     loadOrders();
     loadSlots();
     loadLimiter();
