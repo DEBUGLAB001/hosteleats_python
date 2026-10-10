@@ -1,0 +1,10 @@
+{
+  "challenge_id": "hosteleats-challenge",
+  "runtime_config": {
+    "runtime_type": "python-flask",
+    "install_command": "pip install -r requirements.txt",
+    "start_command": "python -m flask --app app run --reload --host 0.0.0.0 --port 5000",
+    "test_command": "pytest",
+    "ports": [{ "container_port": 5000, "type": "preview" }]
+  }
+}

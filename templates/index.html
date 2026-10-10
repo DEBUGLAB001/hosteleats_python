@@ -1,0 +1,422 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#064e3b">
+  <meta name="description" content="Pre-order from your campus canteen, plan a meal combo, reserve pickup slots, and track orders in real time.">
+  <title>HostelEats · Campus Canteen</title>
+  <link rel="stylesheet" href="static/style.css">
+</head>
+<body>
+  <div id="reloading-banner" class="reloading-banner hidden">
+    <span>⚡ Applying your changes...</span>
+  </div>
+
+  <header class="topbar">
+    <a class="brand" href="./" aria-label="HostelEats home">
+      <span class="brand-mark">H</span>
+      <div class="brand-text">
+        <span>hostel<span class="brand-accent">eats</span></span>
+        <small>CAMPUS CANTEEN</small>
+      </div>
+    </a>
+    <div class="top-actions">
+      <span class="open-status"><i class="radar-pulse"></i> Canteen Live · Closes 9:00 PM</span>
+      <span id="reload-chip" class="reload-chip">Last reload: —</span>
+      <div class="user-pill">
+        <span id="account-chip" class="account-chip">Guest</span>
+        <button id="login-open" class="login-trigger">Sign in</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="shell">
+    <section class="welcome-card">
+      <div class="welcome-copy">
+        <div class="hero-badge"><span class="badge-dot"></span> LIVE CANTEEN SERVICE · FAST PICKUP</div>
+        <h1>Good food.<br><em>Zero wait time.</em></h1>
+        <p>Pre-order your favorite campus meals, schedule your pickup window, and skip the canteen rush completely.</p>
+        <div class="hero-actions">
+          <button class="welcome-cta" data-go="menu">Explore Today’s Menu <span>→</span></button>
+          <button class="welcome-subcta" data-go="combo">Build Meal Combo <span>✨</span></button>
+        </div>
+      </div>
+      <div class="welcome-art" aria-hidden="true">
+        <div class="glow-orb"></div>
+        <div class="plate-card">
+          <div class="plate-inner">
+            <span class="plate-emoji">🥗</span>
+          </div>
+          <div class="plate-tag">
+            <span class="plate-tag-title">Fresh Canteen Special</span>
+            <span class="plate-tag-sub">Cooked fresh daily</span>
+          </div>
+        </div>
+        <div class="floating-badge badge-top">
+          <span class="float-icon">⏱️</span>
+          <div>
+            <b>4–6 Mins</b>
+            <small>Avg. Prep Time</small>
+          </div>
+        </div>
+        <div class="floating-badge badge-bottom">
+          <span class="float-icon">⭐️</span>
+          <div>
+            <b>4.9 / 5.0</b>
+            <small>Student Rating</small>
+          </div>
+        </div>
+      </div>
+      <div class="service-strip">
+        <div class="strip-item"><span class="strip-icon">🥬</span> <span><b>Made Fresh Daily</b> from scratch</span></div>
+        <div class="strip-item"><span class="strip-icon">⚡</span> <span><b>Skip the Long Queue</b> with pre-order</span></div>
+        <div class="strip-item"><span class="strip-icon">💛</span> <span><b>Student-Friendly</b> everyday pricing</span></div>
+        <div class="strip-item"><span class="strip-icon">📍</span> <span><b>Campus Walk</b> navigation ready</span></div>
+      </div>
+    </section>
+
+    <div class="section-title">
+      <div>
+        <span class="eyebrow">YOUR CAMPUS · YOUR CANTEEN</span>
+        <h2>What would you like today?</h2>
+      </div>
+      <div class="live-pill"><span class="live-dot"></span> Kitchen Service Active</div>
+    </div>
+
+    <nav class="tabs" aria-label="HostelEats sections">
+      <button class="tab active" data-tab="menu"><span class="tab-icon">🍽️</span> Menu &amp; Order</button>
+      <button class="tab" data-tab="combo"><span class="tab-icon">✨</span> Combo Builder</button>
+      <button class="tab" data-tab="slots"><span class="tab-icon">📅</span> Pickup Slots</button>
+      <button class="tab" data-tab="orders"><span class="tab-icon">📋</span> My Orders</button>
+      <button class="tab" data-tab="rush"><span class="tab-icon">📊</span> Rush Hour</button>
+      <button class="tab" data-tab="walk"><span class="tab-icon">🚶</span> Campus Walk</button>
+      <button class="tab staff-tab hidden" data-tab="kitchen"><span class="tab-icon">👨‍🍳</span> Kitchen Console</button>
+    </nav>
+
+    <!-- Panel 1: Menu & Order -->
+    <section class="panel active" id="panel-menu">
+      <div id="limiter-status" class="limiter-status-container"></div>
+      <div class="menu-layout">
+        <div class="menu-main">
+          <div class="panel-heading">
+            <div>
+              <span class="eyebrow">TODAY’S PICKS</span>
+              <h3>Fresh from the Kitchen</h3>
+            </div>
+            <span class="muted-label">Prices inclusive of all taxes</span>
+          </div>
+          <div class="category-row">
+            <button class="category active" data-category="All">All Items</button>
+            <button class="category" data-category="South Indian">🥞 South Indian</button>
+            <button class="category" data-category="Snacks">🥟 Snacks</button>
+            <button class="category" data-category="Drinks">☕ Drinks &amp; Beverages</button>
+          </div>
+          <div id="menu-grid" class="menu-grid">
+            <div class="loading-card">Getting today’s menu…</div>
+          </div>
+        </div>
+
+        <aside class="cart-card">
+          <div class="cart-head">
+            <div>
+              <span class="eyebrow">YOUR ORDER</span>
+              <h3>Lunch Bag <span id="cart-count" class="count-badge">0</span></h3>
+            </div>
+            <span class="cart-icon">🛍️</span>
+          </div>
+          <div id="cart-lines" class="cart-lines">
+            <div class="empty-cart">
+              <span class="empty-icon">🍱</span>
+              <b>Your bag is empty</b>
+              <p>Add tasty items from the menu to build your pre-order.</p>
+            </div>
+          </div>
+          <div class="cart-summary-box">
+            <div class="cart-total">
+              <span>Subtotal</span>
+              <b id="cart-total">₹0</b>
+            </div>
+            <div class="cart-subnote">Zero packaging or delivery fees</div>
+          </div>
+          <div class="cart-pickup-field">
+            <label class="field-label" for="order-pickup">Estimated Pickup Time</label>
+            <div class="select-wrapper">
+              <select id="order-pickup">
+                <option>12:30 PM</option>
+                <option>12:45 PM</option>
+                <option>1:00 PM</option>
+                <option>1:15 PM</option>
+                <option>1:30 PM</option>
+              </select>
+            </div>
+          </div>
+          <button id="place-order" class="primary-button full">
+            Place Pre-Order <span>→</span>
+          </button>
+          <p class="tiny-note">⚡ Kitchen will receive your ticket instantly. Pick up at the priority counter.</p>
+        </aside>
+      </div>
+    </section>
+
+    <!-- Panel 2: Combo Builder -->
+    <section class="panel" id="panel-combo" hidden>
+      <div class="feature-layout">
+        <div class="feature-copy card-surface">
+          <span class="eyebrow">SMART MEAL PLANNER</span>
+          <h3>Build Your Perfect Combo</h3>
+          <p>Set any budget and our algorithm will calculate the most satisfying, delicious combination from today’s fresh menu.</p>
+          <label class="field-label" for="budget">Your Budget (INR)</label>
+          <div class="budget-control">
+            <span class="budget-currency">₹</span>
+            <input id="budget" type="number" min="0" max="1000" value="60">
+            <span class="budget-caption">INR Max</span>
+          </div>
+          <div class="budget-presets">
+            <span>Quick presets:</span>
+            <button type="button" class="preset-pill" onclick="document.getElementById('budget').value=50; document.getElementById('build-combo').click();">₹50</button>
+            <button type="button" class="preset-pill" onclick="document.getElementById('budget').value=60; document.getElementById('build-combo').click();">₹60</button>
+            <button type="button" class="preset-pill" onclick="document.getElementById('budget').value=90; document.getElementById('build-combo').click();">₹90</button>
+            <button type="button" class="preset-pill" onclick="document.getElementById('budget').value=120; document.getElementById('build-combo').click();">₹120</button>
+          </div>
+          <button id="build-combo" class="primary-button full">
+            Find Optimal Combo <span>✨</span>
+          </button>
+          <p class="tiny-note">Each item in the combo is guaranteed distinct and in stock.</p>
+        </div>
+        <div class="result-card">
+          <div class="result-head">
+            <span class="result-star">✨</span>
+            <div>
+              <b>Recommended Meal Combo</b>
+              <small>Optimized for maximum satisfaction &amp; taste</small>
+            </div>
+          </div>
+          <div id="combo-result" class="result-body">
+            <div class="empty-state">Enter a budget and click "Find Optimal Combo" to see suggestions.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Panel 3: Pickup Slots -->
+    <section class="panel" id="panel-slots" hidden>
+      <div class="panel-heading">
+        <div>
+          <span class="eyebrow">PICK UP AT YOUR CONVENIENCE</span>
+          <h3>Reserve a Kitchen Pickup Slot</h3>
+          <p class="subcopy">Reserve a guaranteed prep window so your order is hot and ready when you arrive.</p>
+        </div>
+        <span class="slot-calendar">📅 &nbsp; Today's Schedule</span>
+      </div>
+      <div class="slots-layout">
+        <div class="slot-form card-surface">
+          <span class="eyebrow">NEW RESERVATION</span>
+          <h4>Book Pickup Time</h4>
+          <label class="field-label" for="slot-start">Window Start Time</label>
+          <div class="select-wrapper">
+            <select id="slot-start">
+              <option value="720">12:00 PM</option>
+              <option value="735">12:15 PM</option>
+              <option value="750">12:30 PM</option>
+              <option value="765">12:45 PM</option>
+              <option value="780">1:00 PM</option>
+              <option value="795">1:15 PM</option>
+              <option value="810">1:30 PM</option>
+              <option value="825">1:45 PM</option>
+              <option value="840">2:00 PM</option>
+            </select>
+          </div>
+          <label class="field-label" for="slot-end">Window End Time</label>
+          <div class="select-wrapper">
+            <select id="slot-end">
+              <option value="750">12:30 PM</option>
+              <option value="765">12:45 PM</option>
+              <option value="780">1:00 PM</option>
+              <option value="795">1:15 PM</option>
+              <option value="810">1:30 PM</option>
+              <option value="825">1:45 PM</option>
+              <option value="840">2:00 PM</option>
+              <option value="855">2:15 PM</option>
+              <option value="870">2:30 PM</option>
+            </select>
+          </div>
+          <button id="book-slot" class="primary-button full">Reserve Pickup Window <span>→</span></button>
+          <p class="tiny-note">Slots are subject to kitchen capacity constraints.</p>
+        </div>
+        <div class="busy-card card-surface">
+          <div class="panel-heading">
+            <div>
+              <span class="eyebrow">KITCHEN CAPACITY MONITOR</span>
+              <h4>Currently Reserved Windows</h4>
+            </div>
+            <span class="live-dot-wrap"><span class="live-dot"></span> LIVE SYNC</span>
+          </div>
+          <div id="busy-slots" class="busy-slots">
+            <span class="muted-label">Loading reservations…</span>
+          </div>
+          <p class="tiny-note">💡 Unlisted windows are wide open for reservation.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Panel 4: My Orders -->
+    <section class="panel" id="panel-orders" hidden>
+      <div class="panel-heading">
+        <div>
+          <span class="eyebrow">CANTEEN ORDER HISTORY</span>
+          <h3>Your Orders &amp; Live Tracking</h3>
+          <p class="subcopy">Follow kitchen progress and see ready pickup notifications in real time.</p>
+        </div>
+        <span class="date-pill">⟳ &nbsp;Auto-refreshes live</span>
+      </div>
+      <div id="my-orders" class="orders-grid">
+        <div class="empty-state">Sign in to view your orders.</div>
+      </div>
+    </section>
+
+    <!-- Panel 5: Rush Hour -->
+    <section class="panel" id="panel-rush" hidden>
+      <div class="panel-heading">
+        <div>
+          <span class="eyebrow">CANTEEN TRAFFIC ANALYTICS</span>
+          <h3>Find the Quieter Hours</h3>
+          <p class="subcopy">Analyze today’s order density to avoid the peak rush line.</p>
+        </div>
+        <label class="inline-field">
+          <span>Window Analysis:</span>
+          <select id="rush-window">
+            <option value="2" selected>2 hours</option>
+            <option value="3">3 hours</option>
+            <option value="4">4 hours</option>
+          </select>
+        </label>
+      </div>
+      <div class="rush-card card-surface">
+        <div class="rush-summary">
+          <div class="rush-metric">
+            <span class="rush-metric-label">PEAK RUSH PERIOD</span>
+            <b id="peak-window">—</b>
+          </div>
+          <div class="rush-metric">
+            <span class="rush-metric-label">PEAK VOLUME</span>
+            <strong><span id="peak-total">0</span><small> orders</small></strong>
+          </div>
+        </div>
+        <div id="rush-chart" class="rush-chart" role="img" aria-label="Hourly canteen orders"></div>
+        <div class="chart-legend">
+          <span><i class="legend-dot"></i> Regular volume</span>
+          <span><i class="legend-dot peak-dot"></i> Busiest rush window</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Panel 6: Campus Walk -->
+    <section class="panel" id="panel-walk" hidden>
+      <div class="panel-heading">
+        <div>
+          <span class="eyebrow">CAMPUS NAVIGATION</span>
+          <h3>Fastest Walk to Food</h3>
+          <p class="subcopy">Find the fastest walking shortcut across campus directly to the canteen.</p>
+        </div>
+        <span class="date-pill">🚶 &nbsp;Campus paths graph</span>
+      </div>
+      <div class="route-layout">
+        <div class="route-form card-surface">
+          <span class="eyebrow">ROUTE FINDER</span>
+          <h4>Select Locations</h4>
+          <label class="field-label" for="route-from">Starting Building</label>
+          <div class="select-wrapper">
+            <select id="route-from"></select>
+          </div>
+          <label class="field-label" for="route-to">Destination</label>
+          <div class="select-wrapper">
+            <select id="route-to"></select>
+          </div>
+          <button id="find-route" class="primary-button full">Calculate Quickest Route <span>→</span></button>
+        </div>
+        <div id="route-result" class="route-result card-surface">
+          <div class="map-doodle">🧭</div>
+          <b>Route summary will display here</b>
+          <p>Select your starting location and click "Calculate Quickest Route" to view the walking path.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Panel 7: Kitchen Console (Staff) -->
+    <section class="panel" id="panel-kitchen" hidden>
+      <div class="panel-heading">
+        <div>
+          <span class="eyebrow">STAFF OPERATIONS</span>
+          <h3>Kitchen Order Dispatch</h3>
+          <p class="subcopy">Manage incoming tickets, mark prepared orders ready, and dispatch pickups.</p>
+        </div>
+        <span class="date-pill">● &nbsp;Kitchen Terminal Active</span>
+      </div>
+      <div id="kitchen-queue" class="kitchen-queue">
+        <div class="empty-state">Kitchen queue will appear here.</div>
+      </div>
+    </section>
+
+    <section class="bottom-banner">
+      <div class="banner-badge">🍋 CANTEEN PROMISE</div>
+      <div class="banner-content">
+        <b>Good food, prompt service, zero wasted time.</b>
+        <p>Made with fresh local ingredients every morning. Order in advance to skip the line and enjoy your break.</p>
+      </div>
+      <div class="banner-extra">
+        <span class="banner-tag">✦ Fresh &amp; Hygienic</span>
+        <span class="banner-tag">✦ Pre-Order Priority</span>
+      </div>
+    </section>
+
+    <footer>
+      <div class="footer-left">
+        <span class="footer-brand">HOSTELEATS <b>· CAMPUS KITCHEN</b></span>
+        <span class="footer-sub">Fueling campus life with freshly made breakfast, lunch &amp; snacks.</span>
+      </div>
+      <div class="footer-right">
+        <span>Daily Service 8:00 AM – 9:00 PM</span>
+        <span>Made for students &amp; faculty</span>
+      </div>
+    </footer>
+  </main>
+
+  <!-- Login Modal -->
+  <div id="login-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="login-title">
+    <form id="login-form" class="modal-card">
+      <button id="login-close" class="modal-close" type="button" aria-label="Close">✕</button>
+      <span class="eyebrow">CAMPUS AUTHENTICATION</span>
+      <h2 id="login-title">Sign in to HostelEats</h2>
+      <p>Log in to place pre-orders, book custom pickup windows, and track status.</p>
+      
+      <div class="form-group">
+        <label class="field-label" for="username">Username</label>
+        <input id="username" autocomplete="username" value="aarav" required placeholder="Enter username">
+      </div>
+      
+      <div class="form-group">
+        <label class="field-label" for="password">Password</label>
+        <input id="password" type="password" autocomplete="current-password" value="hostel123" required placeholder="Enter password">
+      </div>
+      
+      <button class="primary-button full" type="submit">Sign In to Account <span>→</span></button>
+      
+      <div class="login-hints-box">
+        <span class="login-hint-label">Quick Demo Accounts:</span>
+        <div class="login-demo-pills">
+          <button type="button" class="demo-pill" onclick="document.getElementById('username').value='aarav'; document.getElementById('password').value='hostel123';">
+            👤 Student: <b>aarav</b>
+          </button>
+          <button type="button" class="demo-pill" onclick="document.getElementById('username').value='canteen'; document.getElementById('password').value='kitchen123';">
+            👨‍🍳 Staff: <b>canteen</b>
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div id="toast" class="toast" role="status"></div>
+  <script src="static/app.js" defer></script>
+</body>
+</html>
