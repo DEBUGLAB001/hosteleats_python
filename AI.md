@@ -33,8 +33,6 @@ hosteleats-python-challenge/
 
 ## Bugs and Bug Locations
 
-These are the six behavioral bug surfaces covered by the challenge. The named locations identify the owning implementation areas for debugging and review.
-
 ### 1. Login session never expires (TTL ineffective)
 
 - **Bug location:** `auth.py`, `login` and `get_session`
@@ -54,7 +52,7 @@ These are the six behavioral bug surfaces covered by the challenge. The named lo
 - **Bug location:** `analytics.py`, `peak_load`
 - **How to observe it:** Navigate to the **Rush Hour** tab with the default 2-hour window.
 - **Failure:** An off-by-one loop boundary `range(len(values) - window_size)` skips the final starting index, ignoring the evening rush (6 PM – 7 PM, 58 orders) and reporting an earlier, lower peak (28 orders).
-- **Expected:** The rolling window evaluation tests all valid start hours through `len(values) - window_size`, correctly identifying the evening rush (6 PM – 7 PM, 58 orders) as the true peak.
+- **Expected:** The rolling window evaluation tests all valid start hours through `len(values) - window_size + 1`, correctly identifying the evening rush (6 PM – 7 PM, 58 orders) as the true peak.
 
 ### 4. Campus shortest route evaluates single edge weights instead of accumulated distance
 
