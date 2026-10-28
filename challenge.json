@@ -7,7 +7,7 @@
     "test_command": "pytest",
     "ports": [{ "container_port": 5000, "type": "preview" }]
   },
-   "bug_topics": [
+  "bug_topics": [
     "Authentication & Session Management",
     "Rate Limiting",
     "Analytics & Sliding Window",
@@ -16,3 +16,4 @@
     "Interval Scheduling & Conflict Resolution"
   ]
 }
+
