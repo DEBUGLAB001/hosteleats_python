@@ -5,7 +5,12 @@
     "install_command": "pip install -r requirements.txt",
     "start_command": "python -m flask --app app run --reload --host 0.0.0.0 --port 5000",
     "test_command": "pytest",
-    "ports": [{ "container_port": 5000, "type": "preview" }]
+    "ports": [
+      {
+        "container_port": 5000,
+        "type": "preview"
+      }
+    ]
   },
   "bug_topics": [
     "Authentication & Session Management",
